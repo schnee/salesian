@@ -104,7 +104,7 @@ if (nrow(oob) > 0) {
       ggplot(aes(x = rev)) + geom_density() +
       geom_ribbon(data = rib_df,
                   aes(x = x, ymin = ymin, ymax = ymax),
-                  alpha = 0.2, fill = "green") +
+                  alpha = 0.2, fill = "#A47AA9") +
       scale_x_continuous(labels = dollar) +
       theme_few() +
       labs(
@@ -112,7 +112,7 @@ if (nrow(oob) > 0) {
          subtitle = paste0(
             "Target revenue: ",
             dollar_format()(desired_rev),
-            "\nProbability of attaining: ",
+            "\nProbability of hitting target: ",
             100 * round(prob_of_success, digits = 2),
             "%"
          ),
