@@ -104,7 +104,7 @@ if (nrow(oob) > 0) {
       ggplot(aes(x = rev)) + geom_density() +
       geom_ribbon(data = rib_df,
                   aes(x = x, ymin = ymin, ymax = ymax),
-                  alpha = 0.2) +
+                  alpha = 0.2, fill = "green") +
       scale_x_continuous(labels = dollar) +
       theme_few() +
       labs(
