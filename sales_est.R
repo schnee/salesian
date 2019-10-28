@@ -30,7 +30,7 @@ deals <- tribble(
    "Deal 3", 800000, .5, .1,
    "Deal 4", 1400000, .1, .05,
    "Deal 5", 2000000, .5, .1,
-   "Deal 6", 500000, .5, .1,
+   "Deal 6", 500000, .7, .1,
    "Deal 7", 100000, .5, .1
 )
 
@@ -79,7 +79,7 @@ rev_df %>%
       title = "Probabilities of Revenue",
       subtitle = paste0("Desired revenue: ", dollar_format()(desired_rev), "\nProbability of attaining: ", 
                         100*round(prob_of_success, digits=2),"%"),
-      caption = "The shaded section represents all possible probabilities of exceeding the desired revenue",
+      caption = "The shaded section represents possible probabilities of exceeding the desired revenue",
       x = "Revenue",
       y = "Probability Density"
    ) +
