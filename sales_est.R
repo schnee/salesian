@@ -72,12 +72,12 @@ rib_df <- data.frame(rev_df %>% map_df(~density(.x, from=min(rev_df$rev), to = m
 # plot the bad boy
 rev_df %>% 
    ggplot(aes(x=rev)) + geom_density() +
-   geom_ribbon(data=rib_df, aes(x=x, ymin=ymin, ymax=ymax), alpha = 0.3) +
+   geom_ribbon(data=rib_df, aes(x=x, ymin=ymin, ymax=ymax), alpha = 0.2) +
    scale_x_continuous(labels = dollar) +
    theme_few() +
    labs(
       title = "Probabilities of Revenue",
-      subtitle = paste0("Desired revenue: ", dollar_format()(desired_rev), "\nProbability of attaining: ", 
+      subtitle = paste0("Target revenue: ", dollar_format()(desired_rev), "\nProbability of attaining: ", 
                         100*round(prob_of_success, digits=2),"%"),
       caption = "The shaded section represents possible probabilities of exceeding the desired revenue",
       x = "Revenue",
