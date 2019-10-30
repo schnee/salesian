@@ -7,7 +7,7 @@ library(ggthemes)
 library(scales)
 library(devtools)
 
-devtools::load_all(path = here::here("packages", "saler"), reset = TRUE)
+devtools::load_all(path = "./packages/saler", reset = TRUE)
 
 # deals <- tribble(
 #   ~ name, ~ revenue, ~ mean, ~ var,
