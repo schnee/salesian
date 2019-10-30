@@ -37,7 +37,7 @@ deals <- tribble(
     "Deal 7", 100000, .7, .1
 )
 
-deals <- get_deals("https://docs.google.com/spreadsheets/d/e/2PACX-1vRlfGF9EjLd4bosM_Up-30w8i9YMVm5dEvkV5co34gI-vQrVb6LMfk9XWS0iNlVk3NtBXYAc1HDIz5D/pub?gid=188623953&single=true&output=csv")
+#deals <- get_deals("https://docs.google.com/spreadsheets/d/e/2PACX-1vRlfGF9EjLd4bosM_Up-30w8i9YMVm5dEvkV5co34gI-vQrVb6LMfk9XWS0iNlVk3NtBXYAc1HDIz5D/pub?gid=188623953&single=true&output=csv")
 
 N = 1000000
 
@@ -105,4 +105,13 @@ if (nrow(oob) > 0) {
          y = "Probability Density"
       ) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
+   
+   probs <- c(0,.25, 0.5, 0.75, 0.9, 1)
+   
+   prob_df <- quantile(rev_df$rev, probs = probs) %>% as.data.frame()
+   
+   prob_df$prob <- 1-probs
+   
+   colnames(prob_df) <- c("revenue", "probability")
+   prob_df
 }

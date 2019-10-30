@@ -23,6 +23,9 @@ ui <- fluidPage(
     mainPanel(
       plotOutput("probPlot"),
       hr(),
+      div("The probabilities"),
+      tableOutput("probsTable"),
+      hr(),
       div("The Input Deals"),
       tableOutput("dealsTable")
     )

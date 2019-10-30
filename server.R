@@ -37,33 +37,51 @@ server <- function(input, output) {
     
   })
   
+  
+  revenue_df_fn <- reactive( {
+    N = 1000000
+    
+    deals<- file_data()
+    
+    # convert from mean and variance to alpha and beta for the
+    # beta function
+    deals <-
+      deals %>% cbind(map2_df(deals$mean, deals$var, est_beta_params))
+    
+    # for each deal, simulate the revenue across N probabilities
+    revenue <-
+      pmap(deals %>% select(revenue, alpha, beta), est_revenue, N)
+    
+    # the probability of exeeding the target revenue is the mean
+    # of the sum of each simulation that exceeds the target
+    prob_of_success <- mean(Reduce('+', revenue) > input$target_rev)
+    
+    # build some data frames for plotting
+    rev_df <- Reduce('+', revenue) %>% data.frame(rev = .)
+  })
+  
   output$dealsTable <- renderTable({
     file_data()
   })
   
+  output$probsTable <- renderTable({
+    
+    rev_df <- revenue_df_fn()
+    
+    probs <- c(0,.25, 0.5, 0.75, 0.9, 1)
+    
+    prob_df <- quantile(rev_df$rev, probs = probs) %>% as.data.frame()
+    
+    prob_df$prob <- 1-probs
+    
+    colnames(prob_df) <- c("revenue", "probability")
+    prob_df %>% select(probability, revenue)
+
+  })
+  
   output$probPlot <- renderPlot({
-    
 
-    
-    N = 1000000
-    
-    deals<- file_data()
-
-      # convert from mean and variance to alpha and beta for the
-      # beta function
-      deals <-
-        deals %>% cbind(map2_df(deals$mean, deals$var, est_beta_params))
-      
-      # for each deal, simulate the revenue across N probabilities
-      revenue <-
-        pmap(deals %>% select(revenue, alpha, beta), est_revenue, N)
-      
-      # the probability of exeeding the target revenue is the mean
-      # of the sum of each simulation that exceeds the target
-      prob_of_success <- mean(Reduce('+', revenue) > input$target_rev)
-      
-      # build some data frames for plotting
-      rev_df <- Reduce('+', revenue) %>% data.frame(rev = .)
+      rev_df <- revenue_df_fn()
       
       # the ribbon dataframe. Draws a ribbon under the density for the simulations that exceed
       # the target revenue. "512" is the default number of estimator points in the density
