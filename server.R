@@ -9,17 +9,6 @@ library(devtools)
 
 devtools::load_all(path = "./packages/saler", reset = TRUE)
 
-# deals <- tribble(
-#   ~ name, ~ revenue, ~ mean, ~ var,
-#   "Deal 1", 1200000, .5, .1,
-#   "Deal 2", 900000, .2, .1,
-#   "Deal 3", 800000, .5, .1,
-#   "Deal 4", 1400000, .1, .05,
-#   "Deal 5", 2000000, .5, .1,
-#   "Deal 6", 500000, .9, .01,
-#   "Deal 7", 100000, .7, .1
-# )
-
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
