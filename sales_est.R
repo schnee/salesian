@@ -4,6 +4,9 @@ library(ggplot2)
 library(readr)
 library(ggthemes)
 library(scales)
+library(devtools)
+
+devtools::load_all(path = here::here("packages", "saler"), reset = TRUE)
 
 # desired_rev and deals are the user-specific API into this script; it will be refactored into a
 # set of functions. In the meantime, change these and only these
@@ -25,39 +28,20 @@ desired_rev <- 3500000
 #
 deals <- tribble(
    ~ name, ~ revenue, ~ mean, ~ var,
-   "Deal 1", 1200000, .5, .1,
-   "Deal 2", 900000, .2, .1,
-   "Deal 3", 800000, .5, .1,
-   "Deal 4", 1400000, .1, .05,
-   "Deal 5", 2000000, .5, .1,
-   "Deal 6", 500000, .9, .05,
-   "Deal 7", 100000, .5, .1
+    "Deal 1", 1200000, .5, .1,
+    "Deal 2", 900000, .2, .1,
+    "Deal 3", 800000, .5, .1,
+    "Deal 4", 1400000, .1, .05,
+    "Deal 5", 2000000, .5, .1,
+    "Deal 6", 500000, .9, .01,
+    "Deal 7", 100000, .7, .1
 )
 
-estRevenue <- function(revenue, alpha, beta, N) {
-   rbernoulli(N, p = rbeta(N, alpha, beta)) * revenue
-}
-
-estBetaParams <- function(mu, var) {
-   alpha <- ((1 - mu) / var - 1 / mu) * mu ^ 2
-   beta <- alpha * (1 / mu - 1)
-   return(params = list(alpha = alpha, beta = beta))
-}
-
-validateDeals <- function(deals) {
-   d <- deals %>%
-      mutate(
-         high = mean + var,
-         low = mean - var,
-         oob = if_else(high >= 1 | low <= 0, TRUE, FALSE)
-      )
-   
-   d %>% filter(oob == TRUE)
-}
+deals <- get_deals("https://docs.google.com/spreadsheets/d/e/2PACX-1vRlfGF9EjLd4bosM_Up-30w8i9YMVm5dEvkV5co34gI-vQrVb6LMfk9XWS0iNlVk3NtBXYAc1HDIz5D/pub?gid=188623953&single=true&output=csv")
 
 N = 1000000
 
-oob <- validateDeals(deals)
+oob <- validate_deals(deals)
 
 if (nrow(oob) > 0) {
    msg <- paste(oob$name)
@@ -66,11 +50,11 @@ if (nrow(oob) > 0) {
    # convert from mean and variance to alpha and beta for the
    # beta function
    deals <-
-      deals %>% cbind(map2_df(deals$mean, deals$var, estBetaParams))
+      deals %>% cbind(map2_df(deals$mean, deals$var, est_beta_params))
    
    # for each deal, simulate the revenue across N probabilities
    revenue <-
-      pmap(deals %>% select(revenue, alpha, beta), estRevenue, N)
+      pmap(deals %>% select(revenue, alpha, beta), est_revenue, N)
    
    # the probability of exeeding the target revenue is the mean
    # of the sum of each simulation that exceeds the target
