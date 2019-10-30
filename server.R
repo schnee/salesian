@@ -112,13 +112,12 @@ server <- function(input, output) {
         scale_x_continuous(labels = dollar) +
         theme_few() +
         labs(
-          title = "Probabilities of Revenue",
+          title = paste("Probability of Target: ",
+                        100 * round(prob_of_success, digits = 2),
+                        "%"),
           subtitle = paste0(
             "Target revenue: ",
-            dollar_format()(input$target_rev),
-            "\nProbability of hitting target: ",
-            100 * round(prob_of_success, digits = 2),
-            "%"
+            dollar_format()(input$target_rev)
           ),
           caption = "The shaded section represents possible probabilities of exceeding the desired revenue",
           x = "Revenue",
