@@ -15,7 +15,7 @@ ui <- fluidPage(
                   "text/comma-separated-values,text/plain",
                   ".csv")
       ),
-      numericInput("target_rev", "Target Revenue", value = 100000, min = 0),
+      numericInput("target_rev", "Target Revenue", value = 1e6, min = 0),
       submitButton()
     ),
     
