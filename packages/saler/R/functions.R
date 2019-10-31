@@ -16,7 +16,7 @@ est_beta_params <- function(mu, var) {
 }
 
 validate_deals <- function(deals) {
-  d <- deals %>%
+  d <- deals %>% filter(mean < 1) %>%
     mutate(
       high = mean + var,
       low = mean - var,

@@ -32,6 +32,11 @@ server <- function(input, output) {
     
     deals<- file_data()
     
+    sure_things <- deals %>% filter(mean == 1)
+    
+    deals <- deals %>%
+      filter(mean < 1)
+    
     # convert from mean and variance to alpha and beta for the
     # beta function
     deals <-
@@ -41,12 +46,14 @@ server <- function(input, output) {
     revenue <-
       pmap(deals %>% select(revenue, alpha, beta), est_revenue, N)
     
-    # the probability of exeeding the target revenue is the mean
-    # of the sum of each simulation that exceeds the target
-    prob_of_success <- mean(Reduce('+', revenue) > input$target_rev)
     
     # build some data frames for plotting
     rev_df <- Reduce('+', revenue) %>% data.frame(rev = .)
+    
+    # add in the revenue from the sure things
+    rev_df <- rev_df %>% mutate(rev = rev + sum(sure_things$revenue))
+    
+    rev_df
   })
   
   output$dealsTable <- renderTable({

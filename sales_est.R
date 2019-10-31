@@ -29,9 +29,9 @@ desired_rev <- 3500000
 deals <- tribble(
    ~ name, ~ revenue, ~ mean, ~ var,
     "Deal 1", 1200000, .5, .1,
-    "Deal 2", 900000, .2, .1,
+    "Deal 2", 900000, 1, 0,
     "Deal 3", 800000, .5, .1,
-    "Deal 4", 1400000, .1, .05,
+    "Deal 4", 1400000, 1, 0,
     "Deal 5", 2000000, .5, .1,
     "Deal 6", 500000, .9, .01,
     "Deal 7", 100000, .7, .1
@@ -49,20 +49,27 @@ if (nrow(oob) > 0) {
 } else {
    # convert from mean and variance to alpha and beta for the
    # beta function
-   deals <-
-      deals %>% cbind(map2_df(deals$mean, deals$var, est_beta_params))
+   
+   sure_things <- deals %>% filter(mean == 1)
+   
+   deals <- deals %>%
+      filter(mean < 1)
+   
+   deals <- deals %>% 
+      cbind(map2_df(deals$mean, deals$var, est_beta_params))
    
    # for each deal, simulate the revenue across N probabilities
    revenue <-
       pmap(deals %>% select(revenue, alpha, beta), est_revenue, N)
    
-   # the probability of exeeding the target revenue is the mean
-   # of the sum of each simulation that exceeds the target
-   prob_of_success <- mean(Reduce('+', revenue) > desired_rev)
-   
+
    # build some data frames for plotting
    rev_df <- Reduce('+', revenue) %>% data.frame(rev = .)
    
+   rev_df <- rev_df %>% mutate(rev = rev + sum(sure_things$revenue))
+  
+    # the probability of exeeding the target revenue is the mean
+   # of the sum of each simulation that exceeds the target
    prob_of_success <- mean(rev_df$rev > desired_rev)
    
    # the ribbon dataframe. Draws a ribbon under the density for the simulations that exceed
