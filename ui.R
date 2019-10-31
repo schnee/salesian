@@ -9,13 +9,13 @@ ui <- fluidPage(
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-      numericInput("target_rev", "Target Revenue", value = 100000, min = 0),
       fileInput("deals_file", "Choose CSV File",
                 accept = c(
                   "text/csv",
                   "text/comma-separated-values,text/plain",
                   ".csv")
       ),
+      numericInput("target_rev", "Target Revenue", value = 100000, min = 0),
       submitButton()
     ),
     
@@ -32,7 +32,8 @@ ui <- fluidPage(
       ),
       tabPanel("Help",
                div("An attempt to help estimate the probability of attaining a 
-                   target revenue given a 'basket' of sales deals."),
+                   target revenue given a 'basket' of sales deals", em("within a 
+                                                                       given time period"),"."),
                br(),
       div("Set the desired revenue target in the Target Revenue box, upload a basket
           of deals, and submit the changes. You will be presented with an overall 
@@ -40,7 +41,7 @@ ui <- fluidPage(
           points for specific probabilities (e.g. a 10% chance of hitting X, a 25% chance
           of hitting Y, etc)."),
       br(),
-      div("The baseket of deals must be very well defined as a table of deals with a name,
+      div("The basket of deals must be very well defined as a table of deals with a name,
           the revenue associated with the deal, an expected probability that the deal with 
           manifest, and a variance around that probability (e.g. 50% +/- 10%). Easiest to
           clone ",

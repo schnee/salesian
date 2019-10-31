@@ -57,6 +57,8 @@ server <- function(input, output) {
     
     rev_df <- revenue_df_fn()
     
+
+    
     probs <- c(0,.25, 0.5, 0.75, 0.9, 1)
     
     prob_df <- quantile(rev_df$rev, probs = probs) %>% as.data.frame()
@@ -71,6 +73,11 @@ server <- function(input, output) {
   output$probPlot <- renderPlot({
 
       rev_df <- revenue_df_fn()
+      
+      # the probability of exeeding the target revenue is the mean
+      # of the sum of each simulation that exceeds the target
+      prob_of_success <- mean(rev_df$rev > input$target_rev)
+      
       
       # the ribbon dataframe. Draws a ribbon under the density for the simulations that exceed
       # the target revenue. "512" is the default number of estimator points in the density

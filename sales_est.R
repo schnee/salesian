@@ -63,6 +63,8 @@ if (nrow(oob) > 0) {
    # build some data frames for plotting
    rev_df <- Reduce('+', revenue) %>% data.frame(rev = .)
    
+   prob_of_success <- mean(rev_df$rev > desired_rev)
+   
    # the ribbon dataframe. Draws a ribbon under the density for the simulations that exceed
    # the target revenue. "512" is the default number of estimator points in the density
    # kernel
