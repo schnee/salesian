@@ -22,8 +22,11 @@ server <- function(input, output, session) {
     if (is.null(inFile))
       return(NULL)
     
-    read.csv(inFile$datapath)
+    #put it in the session
+    session$userData$deals <- read.csv(inFile$datapath)
     
+    
+    session$userData$deals
   })
   
   
