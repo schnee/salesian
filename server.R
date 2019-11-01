@@ -9,8 +9,8 @@ library(devtools)
 
 devtools::load_all(path = here::here("packages", "saler"), reset = TRUE)
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
+# Define server logic
+server <- function(input, output, session) {
   
 
   file_data <- reactive({
