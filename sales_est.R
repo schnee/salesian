@@ -27,14 +27,14 @@ desired_rev <- 3500000
 #### chance of landing it"
 #
 deals <- tribble(
-   ~ name, ~ revenue, ~ mean, ~ var,
-    "Deal 1", 1200000, .5, .1,
-    "Deal 2", 900000, 1, 0,
-    "Deal 3", 800000, .5, .1,
-    "Deal 4", 1400000, 1, 0,
-    "Deal 5", 2000000, .5, .1,
-    "Deal 6", 500000, .9, .01,
-    "Deal 7", 100000, .7, .1
+   ~ name, ~ revenue_lo, ~rev_lo_prob, ~revenue_hi, ~rev_hi_prob, ~ booking_mean, ~ booking_var,
+    "Deal 1", 1200000,1, 1200000, 0, .5, .1,
+    "Deal 2", 1200000,0.5, 1200000,0.5,  1, 0,
+    "Deal 3", 800000,0.75, 900000, 0.25, .5, .1,
+    "Deal 4", 1400000, 1, 1400000, 0, 1, 0,
+    "Deal 5", 1750000,0.25, 2000000, 0.75, .5, .1,
+    "Deal 6", 400000, 0.3, 500000, 0.7, .9, .01,
+    "Deal 7", 100000, 0.5, 100000, 0.5, .7, .1
 )
 
 #deals <- get_deals("https://docs.google.com/spreadsheets/d/e/2PACX-1vRlfGF9EjLd4bosM_Up-30w8i9YMVm5dEvkV5co34gI-vQrVb6LMfk9XWS0iNlVk3NtBXYAc1HDIz5D/pub?gid=188623953&single=true&output=csv")
@@ -50,23 +50,23 @@ if (nrow(oob) > 0) {
    # convert from mean and variance to alpha and beta for the
    # beta function
    
-   sure_things <- deals %>% filter(mean == 1)
+   sure_things <- deals %>% filter(booking_mean == 1)
    
-   deals <- deals %>%
-      filter(mean < 1)
+   not_sure_things <- deals %>%
+      filter(booking_mean < 1)
    
-   deals <- deals %>% 
-      cbind(map2_df(deals$mean, deals$var, est_beta_params))
+   not_sure_things <- not_sure_things %>% 
+      cbind(map2_df(not_sure_things$booking_mean, not_sure_things$booking_var, est_beta_params))
    
    # for each deal, simulate the revenue across N probabilities
-   revenue <-
-      pmap(deals %>% select(revenue, alpha, beta), est_revenue, N)
+   revenue <- not_sure_things %>% select(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, alpha, beta) %>%
+      pmap(est_revenue, N)
    
 
    # build some data frames for plotting
    rev_df <- Reduce('+', revenue) %>% data.frame(rev = .)
    
-   rev_df <- rev_df %>% mutate(rev = rev + sum(sure_things$revenue))
+   rev_df <- rev_df %>% mutate(rev = rev + sum(sure_things$revenue_lo))
   
     # the probability of exeeding the target revenue is the mean
    # of the sum of each simulation that exceeds the target
