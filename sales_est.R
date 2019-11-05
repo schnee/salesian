@@ -125,7 +125,7 @@ if (nrow(oob) > 0) {
                        "%"),
          subtitle = paste0(
             "Target booking revenue: ",
-            dollar_format()(input$target_rev)
+            dollar_format()(desired_rev)
          ),
          caption = "The shaded section represents possible probabilities of exceeding the desired revenue",
          x = "Revenue",
