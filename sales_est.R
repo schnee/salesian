@@ -120,13 +120,12 @@ if (nrow(oob) > 0) {
       scale_x_continuous(labels = dollar) +
       theme_few() +
       labs(
-         title = "Probabilities of Revenue",
+         title = paste("Probability of Reaching Target: ",
+                       100 * round(prob_of_success, digits = 2),
+                       "%"),
          subtitle = paste0(
-            "Target revenue: ",
-            dollar_format()(desired_rev),
-            "\nProbability of hitting target: ",
-            100 * round(prob_of_success, digits = 2),
-            "%"
+            "Target booking revenue: ",
+            dollar_format()(input$target_rev)
          ),
          caption = "The shaded section represents possible probabilities of exceeding the desired revenue",
          x = "Revenue",
