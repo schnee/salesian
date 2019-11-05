@@ -35,28 +35,46 @@ server <- function(input, output, session) {
     
     deals<- file_data()
     
-    sure_things <- deals %>% filter(mean == 1)
+    sure_things <- deals %>% filter(booking_mean == 1)
     
-    deals <- deals %>%
-      filter(mean < 1)
+    not_sure_things <- deals %>%
+      filter(booking_mean < 1)
     
-    # convert from mean and variance to alpha and beta for the
-    # beta function
-    deals <-
-      deals %>% cbind(map2_df(deals$mean, deals$var, est_beta_params))
+    not_sure_things <- not_sure_things %>% 
+      cbind(map2_df(not_sure_things$booking_mean, not_sure_things$booking_var, est_beta_params))
     
-    # for each deal, simulate the revenue across N probabilities
-    revenue <-
-      pmap(deals %>% select(revenue, alpha, beta), est_revenue, N)
+    # for each not sure deal, simulate the revenue across N probabilities and simulate the booking probability
+    # the all-in revenue is P(booking) * revenue
+    rev_not_sure <- not_sure_things %>% select(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, alpha, beta) %>%
+      pmap(est_booking_revenue, N)
+    
+    # for each sure deal, the booking probability is 1.0. So we just need to estimate the revenue
+    rev_sure <- sure_things %>% select(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob) %>%
+      pmap(est_revenue, N)
+    
+    # build some data frames for plotting. rev_sure and rev_not_sure are lists of Nx1 vectors, one vector
+    # for each sure or not sure deal. We need to item-wise sum each of these vectors into Nx2 vectors, and
+    # then item-wise sum those into a single estimate for revenue
+    rev_not_sure <- Reduce('+', rev_not_sure)
+    rev_sure <- Reduce('+', rev_sure)
+    
+    the_rev <- NULL
+    if (!is_null(rev_not_sure) & !is_null(rev_sure)) {
+      the_rev <- rev_not_sure + rev_sure
+    }
+    
+    if(!is_null(rev_not_sure) & is_null(rev_sure)){
+      the_rev <- rev_not_sure
+    }
+    
+    if(!is_null(rev_sure) & is_null(rev_not_sure)){
+      the_rev <- rev_sure
+    }
     
     
-    # build some data frames for plotting
-    rev_df <- Reduce('+', revenue) %>% data.frame(rev = .)
-    
-    # add in the revenue from the sure things
-    rev_df <- rev_df %>% mutate(rev = rev + sum(sure_things$revenue))
-    
+    rev_df <- data.frame(rev = the_rev)
     rev_df
+    
   })
   
   output$dealsTable <- renderTable({

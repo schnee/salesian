@@ -37,7 +37,7 @@ deals <- tribble(
     "Deal 7", 100000, 0.5, 100000, 0.5, .7, .1
 )
 
-#deals <- get_deals("https://docs.google.com/spreadsheets/d/e/2PACX-1vRlfGF9EjLd4bosM_Up-30w8i9YMVm5dEvkV5co34gI-vQrVb6LMfk9XWS0iNlVk3NtBXYAc1HDIz5D/pub?gid=188623953&single=true&output=csv")
+deals <- get_deals("https://docs.google.com/spreadsheets/d/e/2PACX-1vRlfGF9EjLd4bosM_Up-30w8i9YMVm5dEvkV5co34gI-vQrVb6LMfk9XWS0iNlVk3NtBXYAc1HDIz5D/pub?gid=188623953&single=true&output=csv")
 
 N = 1000000
 
@@ -69,8 +69,24 @@ if (nrow(oob) > 0) {
    # build some data frames for plotting. rev_sure and rev_not_sure are lists of Nx1 vectors, one vector
    # for each sure or not sure deal. We need to item-wise sum each of these vectors into Nx2 vectors, and
    # then item-wise sum those into a single estimate for revenue
-   rev_df <- Reduce('+', rev_not_sure) + Reduce('+', rev_sure) %>% data.frame(rev = .)
-  
+   rev_not_sure <- Reduce('+', rev_not_sure)
+   rev_sure <- Reduce('+', rev_sure)
+   
+   the_rev <- NULL
+   if (!is_null(rev_not_sure) & !is_null(rev_sure)) {
+      the_rev <- rev_not_sure + rev_sure
+   }
+   
+   if(!is_null(rev_not_sure) & is_null(rev_sure)){
+      the_rev <- rev_not_sure
+   }
+   
+   if(!is_null(rev_sure) & is_null(rev_not_sure)){
+      the_rev <- rev_sure
+   }
+
+   
+  rev_df <- data.frame(rev = the_rev)
     # the probability of exeeding the target revenue is the mean
    # of the sum of each simulation that exceeds the target
    prob_of_success <- mean(rev_df$rev > desired_rev)
