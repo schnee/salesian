@@ -42,13 +42,17 @@ ui <- fluidPage(
           of hitting Y, etc)."),
       br(),
       div("The basket of deals must be very well defined as a table of deals with a name,
-          the revenue associated with the deal, an expected probability that the deal with 
-          manifest, and a variance around that probability (e.g. 50% +/- 10%). Easiest to
+          the low-side revenue associated with the deal, the low-side probability, 
+          the high-side revenue, the high side probability, an expected probability that the deal with 
+          manifest, and a variance around that probability (e.g. 50% +/- 10%). If you want to model deals that
+          are 100% likely to close, enter a 1 for the mean and a 0 (zero) for the variance. Easiest to
           clone ",
       a(href = "https://docs.google.com/spreadsheets/d/1yS1861iwN3NYL_f-HfLEWAy32ZHbb_jRq1LRll4jVSg/edit?usp=sharing",
         "this Google Sheet"), ", edit it, and export it as a CSV. That CSV is what you want to upload."),
       br(),
-      div("Very little error checking.")
+      div("Very little error checking, but you will want to ensure that the low-side probability plus the 
+          high-side probability equals 1, and that the booking probability +/- the booking variance is within
+          (0,1) (e.g. greater than zero and less than one).")
     )
   )
 )
