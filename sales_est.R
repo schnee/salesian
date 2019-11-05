@@ -29,11 +29,11 @@ desired_rev <- 3500000
 deals <- tribble(
    ~ name, ~ revenue_lo, ~rev_lo_prob, ~revenue_hi, ~rev_hi_prob, ~ booking_mean, ~ booking_var,
     "Deal 1", 1200000,1, 1200000, 0, .5, .1,
-    "Deal 2", 1200000,0.5, 1200000,0.5,  1, 0,
-    "Deal 3", 800000,0.75, 900000, 0.25, .5, .1,
-    "Deal 4", 1400000, 1, 1400000, 0, 1, 0,
-    "Deal 5", 1750000,0.25, 2000000, 0.75, .5, .1,
-    "Deal 6", 400000, 0.3, 500000, 0.7, .9, .01,
+    "Deal 2", 1100000,0.5, 1200000,0.5,  0.5, 0,
+    "Deal 3", 800000,0.75, 900000, 0.25, 1, 0,
+    "Deal 4", 1400000, 1, 1400000, 0, 0.3, .1,
+    "Deal 5", 1750000,0.75, 2000000, 0.25, .2, .1,
+    "Deal 6", 400000, 0.01, 1500000, 0.99, 1, 0,
     "Deal 7", 100000, 0.5, 100000, 0.5, .7, .1
 )
 
@@ -59,14 +59,17 @@ if (nrow(oob) > 0) {
       cbind(map2_df(not_sure_things$booking_mean, not_sure_things$booking_var, est_beta_params))
    
    # for each deal, simulate the revenue across N probabilities
-   revenue <- not_sure_things %>% select(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, alpha, beta) %>%
+   rev_not_sure <- not_sure_things %>% select(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, alpha, beta) %>%
+      pmap(est_booking_revenue, N)
+   
+   rev_sure <- sure_things %>% select(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob) %>%
       pmap(est_revenue, N)
    
 
-   # build some data frames for plotting
-   rev_df <- Reduce('+', revenue) %>% data.frame(rev = .)
-   
-   rev_df <- rev_df %>% mutate(rev = rev + sum(sure_things$revenue_lo))
+   # build some data frames for plotting. rev_sure and rev_not_sure are lists of Nx1 vectors, one vector
+   # for each sure or not sure deal. We need to item-wise sum each of these vectors into Nx2 vectors, and
+   # then item-wise sum those into a single estimate for revenue
+   rev_df <- Reduce('+', rev_not_sure) + Reduce('+', rev_sure) %>% data.frame(rev = .)
   
     # the probability of exeeding the target revenue is the mean
    # of the sum of each simulation that exceeds the target
@@ -93,7 +96,7 @@ if (nrow(oob) > 0) {
       mutate(ymax = if_else(x > desired_rev, ymax, 0))
    
    # plot the bad boy
-   rev_df %>%
+   p <- rev_df %>%
       ggplot(aes(x = rev)) + geom_density() +
       geom_ribbon(data = rib_df,
                   aes(x = x, ymin = ymin, ymax = ymax),
@@ -122,5 +125,8 @@ if (nrow(oob) > 0) {
    prob_df$prob <- 1-probs
    
    colnames(prob_df) <- c("revenue", "probability")
+   rownames(prob_df) <- NULL
    prob_df
 }
+
+p

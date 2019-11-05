@@ -7,18 +7,15 @@ est_booking <- function(alpha, beta, N) {
   rbernoulli(N, p = rbeta(N, alpha, beta))
 }
 
-est_rev <- function(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, N) {
+est_revenue <- function(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, N) {
   sample(x = c(revenue_lo, revenue_hi), 
          size = N,  
          prob=c(rev_lo_prob, rev_hi_prob),
          replace=TRUE)
 }
 
-est_revenue <- function(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, alpha, beta, N) {
-  rbernoulli(N, p = rbeta(N, alpha, beta)) * sample(x = c(revenue_lo, revenue_hi), 
-                                                    size = N,  
-                                                    prob=c(rev_lo_prob, rev_hi_prob),
-                                                    replace=TRUE)
+est_booking_revenue <- function(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, alpha, beta, N) {
+  est_booking(alpha, beta, N) * est_revenue(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, N)
   #(rbeta(N, alpha, beta) > 0.5) * revenue
 }
 
