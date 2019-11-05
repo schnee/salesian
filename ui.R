@@ -4,7 +4,7 @@ library(shiny)
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Target Revenue Probability"),
+  titlePanel("Booking Target Revenue Probability"),
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
@@ -52,7 +52,9 @@ ui <- fluidPage(
       br(),
       div("Very little error checking, but you will want to ensure that the low-side probability plus the 
           high-side probability equals 1, and that the booking probability +/- the booking variance is within
-          (0,1) (e.g. greater than zero and less than one).")
+          (0,1) (e.g. greater than zero and less than one)."),
+      br(),
+      div("Github? ", a(href = "https://github.com/schnee/salesian", "Github"),".")
     )
   )
 )
