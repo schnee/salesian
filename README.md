@@ -36,7 +36,12 @@ To run this, you can use R and RStudio. The simplest way to do it is to type `sh
 
 OR
 
-You can use the `Dockerfile` to build an image and then `docker run` that image (exposing port 3838). You can even host the image on, for example, AWS or other cloud provider than can host images. 
+You can use the `Dockerfile` to build an image and then `docker run` that image (exposing port 3838). You can even host the image on, for example, AWS or other cloud provider than can host images. A local docker approach might look like:
+
+```
+docker build --no-cache -t salesian_app .
+docker run --name=salesian_app --user shiny --rm -p 80:3838 salesian_app
+```
 
 Either way, [this spreadsheet on Goolge](https://docs.google.com/spreadsheets/d/1kNbJVZURMRdG6WAOzxrXuZ3-J6iYaF0q1e3Gi3U2qEk/edit?usp=sharing) can be copied, modified, exported as a CVS, and then uploaded. I didn't read directly from Google because a) Google caches things and b) I was too lazy to use something like `googlesheets4`. 
 
