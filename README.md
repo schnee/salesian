@@ -1,3 +1,5 @@
+![The Density Plot](./target-dist.png)
+
 # Salesian
 This repo attempts to model a basket of events that have a probability of occuring and a probability of value if the event manifests. For example a "basket of deals" in a sales pipeline, where each deal can be expressed as occuring within a timeframe as a probability, and a low- and high-side estimate of the deal's value should it occur. The main question it attempts to answer is how likely the entire basket is to meet or exceed some target revenue number. The application was build with a sales pipeline in mind, but non-profit donor rolls could also be modeled.
 
@@ -25,11 +27,7 @@ Each deal has
 
 In words, if a Deal is expressible as: "Deal 2 will land at either $900,000 or $1,080,000 with a 40/60 percent probability and an overall probability of 20% +/- 10% of occuring within some time-frame", then it can be modeled with this tool. If that time-frame has a target goal (e.g. $3,670,000), then this tool attempts to assign a probability that the basket will result in meeting or exceeding that goal.
 
-The tool performs simulations over the entire basket and generates plots that look like:
-
-![The Density Plot](./target-dist.png)
-
-Which shows a density plot of all possible revenue amounts (based on the simulations) and determines the proportion of the amounts that meet or exceed the target. 
+The tool performs simulations over the entire basket and generates plots that look like the lead image up above, which shows a density plot of all possible revenue amounts (based on the simulations) and determines the proportion of the amounts that meet or exceed the target. 
 
 # Technical Details
 
