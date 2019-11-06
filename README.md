@@ -50,4 +50,4 @@ Either way, [this spreadsheet on Google](https://docs.google.com/spreadsheets/d/
 
 The web app is all in R and, more specifically, Shiny.
 
-The simulation is several "draws" from a Bernoulli distribution wrapped around the Beta function (for the booking probability) and a simple uniform two-sided random function for the revenue's low and high. The Bernoulli-wrapped-Beta returns [0,1] which is multiplied by the revenue.
+The simulation is several "draws" from a Bernoulli distribution wrapped around the Beta function (for the booking probability) and a simple uniform two-sided random function for the revenue's low and high. The Bernoulli-wrapped-Beta returns {0,1} which is multiplied by the revenue.
