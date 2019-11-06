@@ -37,7 +37,7 @@ deals <- tribble(
     "Deal 7", 100000, 0.5, 100000, 0.5, .7, .1
 )
 
-deals <- get_deals("https://docs.google.com/spreadsheets/d/e/2PACX-1vRlfGF9EjLd4bosM_Up-30w8i9YMVm5dEvkV5co34gI-vQrVb6LMfk9XWS0iNlVk3NtBXYAc1HDIz5D/pub?gid=188623953&single=true&output=csv")
+deals <- get_deals("https://docs.google.com/spreadsheets/d/e/2PACX-1vTuk1k1ObW1GQv9_AZZW_IwsQ0O1jtv_9HMSQINq9u6fOQE6BkjKSYneodmSLpMRfV8UhfbjnJB5TOR/pub?gid=278219439&single=true&output=csv")
 
 N = 1000000
 
@@ -112,26 +112,7 @@ if (nrow(oob) > 0) {
       mutate(ymax = if_else(x > desired_rev, ymax, 0))
    
    # plot the bad boy
-   p <- rev_df %>%
-      ggplot(aes(x = rev)) + geom_density() +
-      geom_ribbon(data = rib_df,
-                  aes(x = x, ymin = ymin, ymax = ymax),
-                  alpha = 0.2, fill = "#A47AA9") +
-      scale_x_continuous(labels = dollar) +
-      theme_few() +
-      labs(
-         title = paste("Probability of Reaching Target: ",
-                       100 * round(prob_of_success, digits = 2),
-                       "%"),
-         subtitle = paste0(
-            "Target booking revenue: ",
-            dollar_format()(desired_rev)
-         ),
-         caption = "The shaded section represents possible probabilities of exceeding the desired revenue",
-         x = "Revenue",
-         y = "Probability Density"
-      ) +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+   p <- plot_it(rev_df, target_rev, prob_of_success)
    
    probs <- c(0,.25, 0.5, 0.75, 0.9, 1)
    

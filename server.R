@@ -128,27 +128,8 @@ server <- function(input, output, session) {
         mutate(ymax = if_else(x > input$target_rev, ymax, 0))
       
       # plot the bad boy
-      rev_df %>%
-        ggplot(aes(x = rev)) + geom_density() +
-        geom_ribbon(data = rib_df,
-                    aes(x = x, ymin = ymin, ymax = ymax),
-                    alpha = 0.2, fill = "#A47AA9") +
-        scale_x_continuous(labels = dollar) +
-        theme_few() +
-        labs(
-          title = paste("Probability of Reaching Target: ",
-                        100 * round(prob_of_success, digits = 2),
-                        "%"),
-          subtitle = paste0(
-            "Target booking revenue: ",
-            dollar_format()(input$target_rev)
-          ),
-          caption = "The shaded section represents possible probabilities of exceeding the desired revenue",
-          x = "Revenue",
-          y = "Probability Density"
-        ) +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    
+      plot_it(rev_df, input$target_rev, prob_of_success)
+
   })
 
 }
