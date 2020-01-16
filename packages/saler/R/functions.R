@@ -47,7 +47,7 @@ get_deals <- function(url) {
   readr::read_csv(url)
 }
 
-plot_it <- function(rev_df, target_rev, prob_of_success) {
+plot_it <- function(rev_df, rib_df, target_rev, prob_of_success) {
   rev_df %>%
     ggplot(aes(x = rev)) + geom_density() +
     geom_ribbon(data = rib_df,
@@ -61,7 +61,7 @@ plot_it <- function(rev_df, target_rev, prob_of_success) {
                     "%"),
       subtitle = paste0(
         "Target booking revenue: ",
-        dollar_format()(desired_rev)
+        dollar_format()(target_rev)
       ),
       caption = "The shaded section represents possible probabilities of exceeding the desired revenue",
       x = "Revenue",

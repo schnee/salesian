@@ -128,7 +128,7 @@ server <- function(input, output, session) {
         mutate(ymax = if_else(x > input$target_rev, ymax, 0))
       
       # plot the bad boy
-      plot_it(rev_df, input$target_rev, prob_of_success)
+      plot_it(rev_df, rib_df, input$target_rev, prob_of_success)
 
   })
 
