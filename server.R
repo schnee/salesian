@@ -23,7 +23,7 @@ server <- function(input, output, session) {
       return(NULL)
     
     #put it in the session
-    session$userData$deals <- read.csv(inFile$datapath)
+    session$userData$deals <- read_csv(inFile$datapath)
     
     
     session$userData$deals
@@ -40,13 +40,15 @@ server <- function(input, output, session) {
     not_sure_things <- deals %>%
       filter(booking_mean < 1)
     
-    not_sure_things <- not_sure_things %>% 
-      cbind(map2_df(not_sure_things$booking_mean, not_sure_things$booking_var, est_beta_params))
+    rev_not_sure <- list(0)
     
-    # for each not sure deal, simulate the revenue across N probabilities and simulate the booking probability
-    # the all-in revenue is P(booking) * revenue
-    rev_not_sure <- not_sure_things %>% select(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, alpha, beta) %>%
-      pmap(est_booking_revenue, N)
+    if(nrow(not_sure_things) > 0) {
+      not_sure_things <- not_sure_things %>% 
+        cbind(map2_df(not_sure_things$booking_mean, not_sure_things$booking_var, est_beta_params))
+      # for each deal, simulate the revenue across N probabilities
+      rev_not_sure <- not_sure_things %>% select(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob, alpha, beta) %>%
+        pmap(est_booking_revenue, N)
+    }
     
     # for each sure deal, the booking probability is 1.0. So we just need to estimate the revenue
     rev_sure <- sure_things %>% select(revenue_lo, rev_lo_prob, revenue_hi, rev_hi_prob) %>%
@@ -104,7 +106,7 @@ server <- function(input, output, session) {
       
       # the probability of exeeding the target revenue is the mean
       # of the sum of each simulation that exceeds the target
-      prob_of_success <- mean(rev_df$rev > input$target_rev)
+      prob_of_success <- mean(rev_df$rev >= input$target_rev)
       
       
       # the ribbon dataframe. Draws a ribbon under the density for the simulations that exceed
@@ -125,7 +127,7 @@ server <- function(input, output, session) {
           )
         ) %>%
         rename(ymax = rev) %>%
-        mutate(ymax = if_else(x > input$target_rev, ymax, 0))
+        mutate(ymax = if_else(x >= input$target_rev, ymax, 0))
       
       # plot the bad boy
       plot_it(rev_df, rib_df, input$target_rev, prob_of_success)
